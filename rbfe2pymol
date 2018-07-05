@@ -1,0 +1,16 @@
+#!/bin/bash
+SCRIPT=$(readlink -f "$0")
+export R2P_PKGPATH=$(dirname "$SCRIPT")
+export AMBERHOME="/software/amber16_latest_patched"
+export CUDA_HOME="/usr/local/cuda"
+
+export PYTHONPATH="/software/stxslurm:/software/pyslurm:$PYTHONPATH"
+export PYTHONPATH="/software/anaconda2/lib/python2.7/site-packages:$PYTHONPATH"
+export PYTHONPATH="$AMBERHOME/lib64/python2.7/site-packages:$PYTHONPATH"
+export PYTHONPATH="$(dirname "$R2P_PKGPATH"):$PYTHONPATH"
+
+export LD_LIBRARY_PATH="/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="/usr/lib:/usr/local/lib:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="$AMBERHOME/lib:$CUDA_HOME/lib64:$LD_LIBRARY_PATH"
+
+#$R2P_PKGPATH/rbfe_to_pymol_master.py $*
