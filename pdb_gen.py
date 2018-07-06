@@ -1,13 +1,11 @@
-#!/software/anaconda2/bin/python
+#!/usr/bin/env python
 """
 @author: Dazhi Tan
-@created: March 15th, 2018
+@created: July 5th, 2018
 """
 import sys
 import os
 import argparse
-import shutil
-import itertools
 from glob import glob
 
 import numpy as np
@@ -35,6 +33,26 @@ def read_footprint(footprint_file):
 
     df = pd.read_csv(footprint_file, sep='\s+')
 
+    return df
+
+def assign_footprint_values(inpdb, outpdb, data_df):
+
+    lines = open(inpdb, 'r').readlines()
+    with open(outpdb, 'w') as outfh:
+        for l in lines:
+            l = l.rstrip()
+            if 'ATOM' in l:
+                _, atomid, atomname, resname, chainid, resid, x, y, z, _, _, elem = l.split()
+
+                data_idx = data_df.index[data_df.ResNum == int(resid)]
+                assert resname == data_df.loc[data_idx, 'Residue'], \
+                    raise ValueError("Please check the footprint file.")
+                new_occu = data_df.loc[data_idx, 'Total-Energy']
+                print >> outfh, 'ATOM  %5s%5s%4s%2s%4s%12.3f%8.3f%8.3f%6.1f  0.00%12s' \
+                                % (atomid, atomname, resname, chainid, resid,
+                                   float(x), float(y), float(z), float(new_occu), elem.upper())
+            else:
+                print >> outfh, l
 
 if __name__ == '__main__':
 
